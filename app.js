@@ -1,91 +1,51 @@
-const startButton = document.getElementById('startButton');
-const checklistSection = document.getElementById('checklist-section');
-const streakSection = document.getElementById('streak-section');
-const updateButton = document.getElementById('updateButton');
-const resetButton = document.getElementById('resetButton');
-const progressFill = document.getElementById('progressFill');
-const streakMessage = document.getElementById('streakMessage');
-const motivationContainer = document.getElementById('motivation');
-const newItemInput = document.getElementById('newItem');
-const addItemButton = document.getElementById('addItemButton');
-let streakCount = 0;
-let checklistItems = [];
-
-// Show the checklist section when the user starts their journey
-startButton.addEventListener('click', () => {
-    checklistSection.classList.remove('hidden'); // Unhide the checklist section
-    startButton.classList.add('hidden'); // Hide the start button
-    streakSection.classList.remove('hidden'); // Unhide the streak section
-});
-
-// Update progress on checklist completion
-updateButton.addEventListener('click', () => {
-    const checkItems = document.querySelectorAll('.check-item');
-    let completed = 0;
-
-    checkItems.forEach(item => {
-        if (item.checked) {
-            completed++; // Increment if the checkbox is checked
-        }
-    });
-
-    // Update the progress bar based on how many tasks are completed
-    const percentage = (completed / checkItems.length) * 100;
-    progressFill.style.width = `${percentage}%`;
-
-    if (completed === checkItems.length) {
-        streakCount++; // Increment streak count when all tasks are completed
-        streakMessage.innerHTML = `You have completed <strong>${streakCount}</strong> days clean!`;
-    }
-});
-
-// Reset streak
-resetButton.addEventListener('click', () => {
-    streakCount = 0; // Reset streak count
-    progressFill.style.width = '0%'; // Reset the progress bar
-    streakMessage.innerHTML = `You have completed <strong>${streakCount}</strong> days clean!`; // Reset message
-});
-
-// Add custom item to the checklist
-addItemButton.addEventListener('click', () => {
-    const newItem = newItemInput.value.trim();
-    if (newItem) {
-        checklistItems.push(newItem);
-        updateChecklist();
-        newItemInput.value = ''; // Clear the input
-    }
-});
-
-// Update the checklist UI
-function updateChecklist() {
-    const checklistContainer = document.getElementById('checklist');
-    checklistContainer.innerHTML = ''; // Clear current checklist
-    checklistItems.forEach(item => {
-        const checklistItem = document.createElement('div');
-        checklistItem.classList.add('checklist-item');
-        checklistItem.innerHTML = `<input type="checkbox" class="check-item"> ${item}`;
-        checklistContainer.appendChild(checklistItem);
-    });
-}
-
-// Dynamic Daily Motivation
-const quotes = [
-    "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.",
-    "The only way to do great work is to love what you do.",
-    "Success is not final, failure is not fatal: It is the courage to continue that counts.",
-    "The future belongs to those who believe in the beauty of their dreams."
+// Motivation Quotes
+const motivations = [
+    "You are stronger than you think.",
+    "One day at a time, one step at a time.",
+    "Don't stop now, you're closer than you think.",
+    "Every setback is a setup for a comeback.",
+    "Push yourself because no one else is going to do it for you."
 ];
 
-// Function to update motivation dynamically
-function updateMotivation() {
-    motivationContainer.innerHTML = ''; // Clear current content
-    quotes.forEach(quote => {
-        const quoteElement = document.createElement('p');
-        quoteElement.textContent = quote;
-        motivationContainer.appendChild(quoteElement);
-    });
+let currentMotivationIndex = 0;
+
+function showMotivation() {
+    const motivationDisplay = document.getElementById("motivationDisplay");
+    motivationDisplay.textContent = motivations[currentMotivationIndex];
+    currentMotivationIndex = (currentMotivationIndex + 1) % motivations.length;
 }
 
-// Call the function to show motivation
-updateMotivation();
+// Change motivation every 10 seconds
+setInterval(showMotivation, 10000);
+showMotivation();  // Show the first quote immediately
+
+// Adding Daily Checklist
+const addChecklistButton = document.getElementById("addChecklistButton");
+const checklistSection = document.getElementById("checklist");
+const checklistInput = document.getElementById("checklistInput");
+
+addChecklistButton.addEventListener("click", () => {
+    if (checklistInput.value.trim() !== "") {
+        const checklistItem = document.createElement("div");
+        checklistItem.classList.add("checklist-item");
+        checklistItem.innerHTML = `
+            <input type="checkbox" class="check-item">
+            <span>${checklistInput.value}</span>
+        `;
+        checklistSection.appendChild(checklistItem);
+        checklistInput.value = ""; // Clear input
+    }
+});
+
+// Start Button functionality
+document.getElementById("startButton").addEventListener("click", () => {
+    document.getElementById("checklist-section").classList.remove("hidden");
+});
+
+// Resetting streak button functionality
+document.getElementById("resetButton").addEventListener("click", () => {
+    // Reset logic for the streak
+    document.getElementById("progressFill").style.width = "0%";
+    document.getElementById("streakMessage").innerHTML = "You have completed <strong>0</strong> days clean!";
+});
 
