@@ -10,40 +10,49 @@
             background-color: #181818;
             color: #f9f9f9;
             font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
         }
+
+        /* Section Styling */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
-        .card {
-            background-color: #222;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease-in-out;
+
+        header {
+            transition: all 0.3s ease;
         }
-        .card:hover {
+
+        header:hover {
+            background-color: #1e293b;
             transform: translateY(-10px);
         }
+
+        /* Card Styling */
+        .card {
+            background-color: #222;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
         .card-header {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: bold;
             color: #38bdf8;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .progress-bar {
-            height: 12px;
-            border-radius: 8px;
-            background-color: #444;
-        }
-        .progress-fill {
-            height: 100%;
-            background-color: #38bdf8;
-            border-radius: 8px;
-            transition: width 0.5s ease-in-out;
-        }
+
         .btn {
             background-color: #38bdf8;
             padding: 12px;
@@ -53,22 +62,59 @@
             font-size: 1.1rem;
             display: inline-block;
             margin-top: 1rem;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s ease;
         }
+
         .btn:hover {
             background-color: #0284c7;
+            transform: translateY(-5px);
         }
+
         footer {
             text-align: center;
             color: #777;
             padding-top: 2rem;
             font-size: 0.9rem;
         }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 12px;
+            border-radius: 8px;
+            background-color: #444;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #38bdf8;
+            border-radius: 8px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Dynamic Animation */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         .checklist-item {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-in-out forwards;
+            animation-delay: 0.3s;
         }
+
         .checklist-item input {
             margin-right: 10px;
         }
@@ -77,7 +123,7 @@
 <body>
     <div class="container">
         <!-- Header Section -->
-        <header class="text-center py-10">
+        <header class="text-center py-10 transition-all">
             <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
                 Your Comeback Starts Now
             </h1>
@@ -86,7 +132,7 @@
         </header>
 
         <!-- Daily Checklist Section -->
-        <section id="checklist-section" class="hidden">
+        <section id="checklist-section" class="hidden fade-in">
             <div class="card">
                 <h2 class="card-header">Daily Checklist</h2>
                 <div id="checklist">
@@ -111,7 +157,7 @@
         </section>
 
         <!-- Streak Tracker Section -->
-        <section id="streak-section">
+        <section id="streak-section" class="fade-in">
             <div class="card">
                 <h2 class="card-header">Your Streak</h2>
                 <div class="progress-bar">
@@ -121,13 +167,78 @@
                 <button class="btn" id="resetButton">Reset Streak</button>
             </div>
         </section>
-        
+
+        <!-- Motivational Quote Section -->
+        <section id="quote-section" class="fade-in">
+            <div class="card">
+                <h2 class="card-header">Daily Motivation</h2>
+                <p class="text-lg font-semibold" id="quoteText">"Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle."</p>
+            </div>
+        </section>
+
         <!-- Footer Section -->
         <footer>
             <p>&copy; 2025 ComebackKing.io | Built to help you level up every day</p>
         </footer>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        const startButton = document.getElementById('startButton');
+        const checklistSection = document.getElementById('checklist-section');
+        const streakSection = document.getElementById('streak-section');
+        const updateButton = document.getElementById('updateButton');
+        const resetButton = document.getElementById('resetButton');
+        const progressFill = document.getElementById('progressFill');
+        const streakMessage = document.getElementById('streakMessage');
+        const quoteText = document.getElementById('quoteText');
+        let streakCount = 0;
+
+        // Show the checklist section when the user starts their journey
+        startButton.addEventListener('click', () => {
+            checklistSection.classList.remove('hidden');
+            startButton.classList.add('hidden');
+            streakSection.classList.remove('hidden');
+        });
+
+        // Update progress on checklist completion
+        updateButton.addEventListener('click', () => {
+            const checkItems = document.querySelectorAll('.check-item');
+            let completed = 0;
+
+            checkItems.forEach(item => {
+                if (item.checked) {
+                    completed++;
+                }
+            });
+
+            const percentage = (completed / checkItems.length) * 100;
+            progressFill.style.width = `${percentage}%`;
+
+            if (completed === checkItems.length) {
+                streakCount++;
+                streakMessage.innerHTML = `You have completed <strong>${streakCount}</strong> days clean!`;
+            }
+        });
+
+        // Reset streak
+        resetButton.addEventListener('click', () => {
+            streakCount = 0;
+            progressFill.style.width = '0%';
+            streakMessage.innerHTML = `You have completed <strong>${streakCount}</strong> days clean!`;
+        });
+
+        // Random motivational quotes
+        const quotes = [
+            "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.",
+            "The only way to do great work is to love what you do.",
+            "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+            "The future belongs to those who believe in the beauty of their dreams."
+        ];
+
+        setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            quoteText.textContent = quotes[randomIndex];
+        }, 5000);
+    </script>
 </body>
 </html>
