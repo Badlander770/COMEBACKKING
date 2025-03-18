@@ -5,8 +5,11 @@ const updateButton = document.getElementById('updateButton');
 const resetButton = document.getElementById('resetButton');
 const progressFill = document.getElementById('progressFill');
 const streakMessage = document.getElementById('streakMessage');
-const quoteText = document.getElementById('quoteText');
+const motivationContainer = document.getElementById('motivation');
+const newItemInput = document.getElementById('newItem');
+const addItemButton = document.getElementById('addItemButton');
 let streakCount = 0;
+let checklistItems = [];
 
 // Show the checklist section when the user starts their journey
 startButton.addEventListener('click', () => {
@@ -43,7 +46,29 @@ resetButton.addEventListener('click', () => {
     streakMessage.innerHTML = `You have completed <strong>${streakCount}</strong> days clean!`; // Reset message
 });
 
-// Random motivational quotes
+// Add custom item to the checklist
+addItemButton.addEventListener('click', () => {
+    const newItem = newItemInput.value.trim();
+    if (newItem) {
+        checklistItems.push(newItem);
+        updateChecklist();
+        newItemInput.value = ''; // Clear the input
+    }
+});
+
+// Update the checklist UI
+function updateChecklist() {
+    const checklistContainer = document.getElementById('checklist');
+    checklistContainer.innerHTML = ''; // Clear current checklist
+    checklistItems.forEach(item => {
+        const checklistItem = document.createElement('div');
+        checklistItem.classList.add('checklist-item');
+        checklistItem.innerHTML = `<input type="checkbox" class="check-item"> ${item}`;
+        checklistContainer.appendChild(checklistItem);
+    });
+}
+
+// Dynamic Daily Motivation
 const quotes = [
     "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.",
     "The only way to do great work is to love what you do.",
@@ -51,8 +76,16 @@ const quotes = [
     "The future belongs to those who believe in the beauty of their dreams."
 ];
 
-// Display a new random quote every 5 seconds
-setInterval(() => {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    quoteText.textContent = quotes[randomIndex];
-}, 5000);
+// Function to update motivation dynamically
+function updateMotivation() {
+    motivationContainer.innerHTML = ''; // Clear current content
+    quotes.forEach(quote => {
+        const quoteElement = document.createElement('p');
+        quoteElement.textContent = quote;
+        motivationContainer.appendChild(quoteElement);
+    });
+}
+
+// Call the function to show motivation
+updateMotivation();
+
